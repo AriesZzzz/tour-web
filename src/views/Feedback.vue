@@ -1,5 +1,8 @@
 <template>
-    
+    <div class="feedback">
+        feedback
+    </div>
+
 </template>
 
 <script>
@@ -11,7 +14,7 @@
     import {} from 'api'
 
     export default {
-        name: "datails",
+        name: "feedback",
         data() {
             return {}
         },
