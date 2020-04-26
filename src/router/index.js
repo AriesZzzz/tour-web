@@ -29,6 +29,11 @@ const routes = [
                 name: '用户反馈',
                 component: () => import('@/Feedback'),
             },
+            {
+                path: 'order',
+                name: '订单',
+                component: () => import('@/Order'),
+            },
 
         ]
 
@@ -40,7 +45,7 @@ const routes = [
 ]
 
 const router = new VueRouter({
-    mode: 'history',
+    mode: 'hash',
     base: process.env.BASE_URL,
     routes
 })

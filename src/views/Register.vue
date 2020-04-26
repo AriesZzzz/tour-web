@@ -107,10 +107,10 @@
     }
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
     .register {
         height: 100vh;
-        background-color: rgb(240, 240, 240);
+        /*background-color: rgb(240, 240, 240);*/
 
     }
 

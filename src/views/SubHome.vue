@@ -24,29 +24,34 @@
                 >
                 </el-input>
             </div>
-            <el-col :span="24">
+            <el-col :span="24" style="height: 720px;">
                 <el-tabs v-model="activeName" @tab-click="">
                     <el-tab-pane label="四川" name="first">
-                        <el-row type="flex" justify="center" :gutter="20"
+                        <el-row type="flex" justify="start" :gutter="20"
                                 style="flex-wrap: wrap;margin-top: 10px;">
-                            <el-col :span="6" v-for="item in tourData" :key="item.name" style="margin-bottom: 10px;"
+                            <el-col :span="6" v-for="item in tourData[cityNum]" :key="item.name" style="margin-bottom: 10px;"
                                     class="card">
                                 <el-card :body-style="{ padding: '15px' }">
                                     <!--点击一张图即可大图预览该栏所有图片-->
                                     <el-image
                                         style="width: 100%;"
-                                        :src="'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png'"
-                                        :preview-src-list="['https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png']">
+                                        :src="item.imgUrls[0]"
+                                        :preview-src-list="item.imgUrls">
+                                        <div slot="error" style="height: 216px;">
+                                            <i class="el-icon-picture-outline"></i>
+                                        </div>
                                     </el-image>
 
-                                    <div style="padding: 14px;">
+                                    <div style="padding: 14px;position: relative;">
                                         <span>{{item.name}}</span>
+                                        <span style="color: red;font-size: 22px;position: absolute;right: 5px;">￥{{item.ticketPrice}}起</span>
                                         <div class="bottom clearfix">
                                             <span class="time">{{ item.address }}</span>
-                                            <el-button type="text" class="button"
-                                                       @click="goToDetail(item.scenicSpotId)">查看详情
-                                            </el-button>
+
                                         </div>
+                                        <el-button type="text" class="button"
+                                                   @click="goToDetail(item.scenicSpotId)">查看详情
+                                        </el-button>
                                     </div>
                                 </el-card>
                             </el-col>
@@ -111,16 +116,18 @@
         </el-row>
 
         <el-row type="flex" justify="end">
-            <el-col :span="8">
+            <el-col :span="6">
                 <el-pagination
                     background
                     layout="prev, pager, next"
                     :page-size="8"
-                    :total="20">
+                    :total="24"
+                    @current-change="currChange"
+                    :current-page="currP"
+                >
                 </el-pagination>
             </el-col>
         </el-row>
-
 
     </div>
 </template>
@@ -139,6 +146,8 @@
         components: {},
         data() {
             return {
+                currP: 1, // 当前页
+                cityNum: 0, // 城市序号
                 searchFilter: '',
                 activeName: 'first', // 默认选中的菜单
                 currPageInfo: null, // 当前页面信息
@@ -152,15 +161,25 @@
             }
         },
         created() {
-            this.getTourData()
+            this.getTourData(this.searchFilter)
         },
-        computed: {},
+        computed: {
+
+        },
+        watch: {
+            searchFilter(newVal) {
+                this.getTourData(newVal)
+            }
+        },
         methods: {
-            async getTourData() {
-                let result = await reqTourInfo(this.searchFilter)
+            currChange(currPage) {
+                this.getTourData(this.searchFilter, currPage)
+            },
+            async getTourData(name, page) {
+                let result = await reqTourInfo(name, page)
                 if (result.data.code === 0) {
                     this.currPageInfo = result.data.page
-                    this.tourData = result.data.data
+                    this.tourData.unshift(result.data.data)
                 } else {
                     this.$message.error('请求失败')
                 }
@@ -178,7 +197,7 @@
 
     }
 </script>
-<style lang="scss" scoped>
+<style scoped>
     .filter-input {
         width: 200px;
         height: 40px;
@@ -191,9 +210,6 @@
     .card {
         transition: all .6s ease;
 
-        &:hover {
-            /*transform: scale(1.1);*/
-        }
     }
 
     .logo {
@@ -245,11 +261,11 @@
 
     /deep/ .el-tabs__nav-wrap {
         /*width: 40%;*/
-        &:after {
-            content: '';
-            height: 100px;
-            background-color: transparent !important;
-        }
+    }
+    /deep/ .el-tabs__nav-wrap:after {
+        content: '';
+        height: 100px;
+        background-color: transparent !important;
     }
 
     .el-dialog__header {

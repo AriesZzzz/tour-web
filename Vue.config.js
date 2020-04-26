@@ -6,7 +6,15 @@ function resolve (dir) {
 
 
 module.exports = {
-
+    publicPath: './',
+    assetsDir: './',
+    devServer: {
+      proxy: {
+          '/travel': {
+              target: 'http://120.24.186.190:8080'
+          }
+      }
+    },
     chainWebpack: (config)=>{
         //修改文件引入自定义路径
         config.resolve.alias

@@ -8,7 +8,6 @@
                         <el-menu :default-active="activeIndex" style="border: none;" mode="horizontal"
                                  @select="handleSelect">
                             <el-menu-item index="5">
-
                             </el-menu-item>
                             <el-menu-item index="1">首页</el-menu-item>
                             <el-submenu index="2">
@@ -70,7 +69,6 @@
             </el-form>
         </el-dialog>
 
-
     </div>
 </template>
 <script>
@@ -119,10 +117,18 @@
                             trigger: 'blur'
                         }
                     ]
+                },
+                routeMap: {
+                    '首页': '1',
+                    '注册': '4'
                 }
             }
         },
         created() {
+            this.activeIndex = this.routeMap[this.$route.name]
+            let user = window.sessionStorage.getItem('user')
+            this.isLogin = !!user
+            this.setUserName(user || '游客')
         },
         computed: {
             ...mapState([
@@ -140,6 +146,7 @@
                 if (result.data.code === 0) {
                     let user = result.data.data.number
                     this.$message.success('登录成功！')
+                    window.sessionStorage.setItem('user', user)
                     this.setUserName(user)
                     this.showLogin = false
                     this.isLogin = true
@@ -155,20 +162,25 @@
                     .then(() => {
                         this.logout()
                         this.isLogin = false
+                        window.sessionStorage.removeItem('user')
                     })
                     .catch(() => {
 
                     });
             },
             handleSelect(key) {
-                console.log(key)
                 switch (key) {
                     // 首页
                     case '1':
                         this.$router.push({name: '首页'})
                         break
-                    // 用户名
-                    case '2':
+                    // 已购景点
+                    case '2-1':
+                        this.$router.push({name: '订单'})
+                        break
+                    // 留言反馈
+                    case '2-2':
+                        this.$router.push({name: '用户反馈'})
                         break
                     // 退出登录
                     case '2-3':
@@ -192,10 +204,7 @@
                         this.showLogin = true
                 }
                 // 根据当前路由决定选中选项
-                this.activeIndex = {
-                    '首页': '1',
-                    '注册': '4'
-                }[this.$route.name]
+                this.activeIndex = this.routeMap[newVal.name]
             }
         },
     }
