@@ -2,14 +2,14 @@ import axios from 'axios'
 import { Message } from 'element-ui'
 
 let serve = axios.create({
-    baseURL: 'http://120.24.186.190:8080/travel',
-    withCredentials: false,
+    baseURL: '',
+    withCredentials: true,
     timeout: 5000,
-    /*headers: {
+    headers: {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': 'X-Requested-With,Content-Type',
         'Access-Control-Allow-Methods': 'PUT,POST,GET,DELETE,OPTIONS',
-    }*/
+    }
 })
 export default function request(url, data = {}, method = "GET") {
     return new Promise((resolve) => {

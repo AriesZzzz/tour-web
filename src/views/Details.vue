@@ -30,22 +30,22 @@
                 <p style="text-align: right;"><b style="font-size: 60px;color: red;">￥{{detail.ticketPrice}}</b></p>
             </div>
             <p style="text-align: center;">
-                <el-button type="danger" icon="el-icon-goods">加入订单</el-button>
+                <el-button type="danger" icon="el-icon-goods" @click="addUserOrder">去购买</el-button>
             </p>
 
+            <form action="/travel/json/user/order/add" method="post">
+                <input name="scenicSpotId" value="1587649892324820042137" hidden>
+                <input name="ticketNum" value="1" hidden>
 
+                <button type="submit">支付宝支付</button>
+            </form>
         </div>
     </div>
 </template>
 
 <script>
     import {
-        mapGetters,
-        mapMutations,
-        mapState
-    } from 'vuex'
-    import {
-        findDetailById
+        findDetailById,
     } from 'api'
 
     export default {
@@ -53,13 +53,14 @@
         data() {
             return {
                 detail: null, // 详情
+                ticketCount: 1, // 票数
+                formData: null,
             }
         },
         created() {
             this.getDetail()
         },
         computed: {
-            ...mapState([])
         },
         methods: {
             async getDetail() {
@@ -69,7 +70,7 @@
                 } else {
                     this.$message.error(result.data.msg)
                 }
-            }
+            },
         }
     }
 </script>
